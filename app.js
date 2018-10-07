@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Platform, ListView, Keyboard } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Platform,
+  ListView,
+  Keyboard
+} from 'react-native';
 import Header from './header';
 import Footer from './footer';
 import Row from './row';
@@ -7,7 +13,7 @@ import Row from './row';
 export default class App extends Component {
   constructor(props) {
     super(props);
-    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2});
+    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       allComplete: false,
       value: '',
@@ -17,67 +23,67 @@ export default class App extends Component {
   }
 
   setSource = (items, itemsDataSource, otherState) => {
+    const { dataSource } = this.state;
     this.setState({
       items,
-      dataSource: this.state.dataSource.cloneWithRows(itemsDataSource),
+      dataSource: dataSource.cloneWithRows(itemsDataSource),
       ...otherState
-    })
+    });
   }
 
   handleToggleAllComplete = () => {
-    const newItems = this.state.items.map(item => ({
+    const { items, allComplete } = this.state;
+    const newItems = items.map(item => ({
       ...item,
-      complete: !this.state.allComplete
+      complete: !allComplete
     }));
-    this.setSource(newItems, newItems, { allComplete: !this.state.allComplete});
-  }
+    this.setSource(newItems, newItems, { allComplete: !allComplete });
+  };
 
   handleAddItem = () => {
-    if (!this.state.value) {
+    const { value, items } = this.state;
+    if (!value) {
       return;
     }
     const newItems = [
-      ...this.state.items,
+      ...items,
       {
         key: Date.now(),
-        text: this.state.value,
+        text: value,
         complete: false
       }
     ];
-    this.setSource(newItems, newItems, { value: "" });
-  }
+    this.setSource(newItems, newItems, { value: '' });
+  };
 
   render() {
+    const { value, dataSource } = this.state;
     return (
       <View style={styles.container}>
         <Header
-          value={this.state.value}
+          value={value}
           onAddItem={this.handleAddItem}
-          onChange={value => this.setState({ value })}
+          onChange={eventValue => this.setState({ value: eventValue })}
           onToggleAllComplete={this.handleToggleAllComplete}
         />
         <View style={styles.content}>
           <ListView
             style={styles.list}
             enableEmptySections
-            dataSource={this.state.dataSource}
+            dataSource={dataSource}
             onScroll={() => Keyboard.dismiss()}
-            renderRow={({key, ...value}) => {
-              return (
-                <Row
-                  key={key}
-                  {...value}
-                />
-              )
-            }}
-            renderSeparator={(SectionId, rowId) => {
-              return (
-                <View
-                  key={rowId}
-                  style={styles.separator}
-                />
-              )
-            }}
+            renderRow={({ key, ...rowValue }) => (
+              <Row
+                key={key}
+                {...rowValue}
+              />
+            )}
+            renderSeparator={(SectionId, rowId) => (
+              <View
+                key={rowId}
+                style={styles.separator}
+              />
+            )}
           />
         </View>
         <Footer />
