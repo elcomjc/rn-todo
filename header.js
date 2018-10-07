@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   Text,
@@ -8,6 +9,13 @@ import {
 } from 'react-native';
 
 export default class Header extends Component {
+  static propTypes = {
+    onToggleAllComplete: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    value: PropTypes.string.isRequired,
+    onAddItem: PropTypes.func.isRequired
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -15,17 +23,23 @@ export default class Header extends Component {
   }
 
   render() {
+    const {
+      onToggleAllComplete,
+      onChange,
+      value,
+      onAddItem
+    } = this.props;
     return (
       <View style={styles.header}>
-        <TouchableOpacity onPress={this.props.onToggleAllComplete}>
+        <TouchableOpacity onPress={onToggleAllComplete}>
           <Text style={styles.toogleIcon}>
             {String.fromCharCode(10003)}
           </Text>
         </TouchableOpacity>
         <TextInput
-          value={this.props.value}
-          onChangeText={this.props.onChange}
-          onSubmitEditing={this.props.onAddItem}
+          value={value}
+          onChangeText={onChange}
+          onSubmitEditing={onAddItem}
           placeholder="What needs to be done?"
           blurOnSubmit={false}
           returnKeyType="done"
